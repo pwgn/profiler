@@ -1,0 +1,7 @@
+pymongo
+fastapi
+pandas
+python-multipart
+uuid
+uvicorn[standard]
+ydata-profiling
