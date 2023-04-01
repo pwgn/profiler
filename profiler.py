@@ -6,7 +6,7 @@ import pandas as pd
 import uuid
 from dictstore import DictStore
 
-DEFAULT_PROFILE_RESULT_DIR = './profile_result_store'
+DEFAULT_PROFILE_RESULT_DIR = 'profile_result_store'
 PROFILE_STORE = 'profile_store.json'
 
 PROFILE_STATUS_READY = 'READY'
@@ -26,11 +26,11 @@ class ProfileStore:
                             'status': PROFILE_STATUS_PROCESSING,
                             'timestamp': timestamp})
 
-        profile_file_name = self._profile_file(profile_id, input_file)
+        profile_file_path = self._profile_file(profile_id, input_file)
 
         self.profiles.set(profile_id, {
                             'status': PROFILE_STATUS_READY,
-                            'file_name': profile_file_name,
+                            'profile_path': profile_file_path,
                             'timestamp': timestamp})
 
         return profile_id
@@ -41,10 +41,9 @@ class ProfileStore:
         if profile_result is None:
             return {"error": "Profile not found"}
 
-        file_name = profile_result['file_name']
+        profile_file_path = profile_result['profile_path']
 
-
-        f = open(f'{DEFAULT_PROFILE_RESULT_DIR}/{profile_id}/{file_name}.html', "r")
+        f = open(profile_file_path, "r")
         return f
 
     def _profile_file(self, profile_id, input_file):
@@ -55,23 +54,22 @@ class ProfileStore:
         with open(file_path, 'wb') as f:
             f.write(input_file.file.read())
 
-        profile_file_name = profile(file_path, directory_path)
+        profile_file_path = profile(file_path, directory_path)
 
-        return profile_file_name
+        return profile_file_path
 
 def profile(inputfile: str, outputdir: str = None):
     print(f'profiling:{inputfile}')
 
     result_dir = outputdir if outputdir is not None else DEFAULT_PROFILE_RESULT_DIR
 
-    df_input = pd.read_csv(inputfile, sep = None)
+    df_input = pd.read_csv(inputfile, engine='python', sep = None)
     filename = os.path.basename(inputfile)
     profile = ProfileReport(df_input, title=filename)
 
-    result_location = f'{result_dir}/{filename}'
+    result_location = f'{result_dir}/{Path(filename).stem}.html'
     profile.to_file(result_location)
 
     print(f'profiling result location:{result_location}')
 
-    profile_file_name = Path(result_location).stem
-    return profile_file_name
+    return result_location
