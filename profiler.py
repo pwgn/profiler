@@ -9,20 +9,29 @@ from dictstore import DictStore
 DEFAULT_PROFILE_RESULT_DIR = './profile_result_store'
 PROFILE_STORE = 'profile_store.json'
 
+PROFILE_STATUS_READY = 'READY'
+PROFILE_STATUS_PROCESSING = 'PROCESSING'
+
 class ProfileStore:
     def __init__(self):
-        os.makedirs(DEFAULT_PROFILE_RESULT_DIR)
+        if not os.path.exists(DEFAULT_PROFILE_RESULT_DIR):
+            os.makedirs(DEFAULT_PROFILE_RESULT_DIR)
         self.profiles = DictStore(f'{DEFAULT_PROFILE_RESULT_DIR}/{PROFILE_STORE}')
 
     def create_profile(self, input_file):
         profile_id = str(uuid.uuid4())
         timestamp = datetime.now()
 
+        self.profiles.set(profile_id, {
+                            'status': PROFILE_STATUS_PROCESSING,
+                            'timestamp': timestamp})
+
         profile_file_name = self._profile_file(profile_id, input_file)
 
-        self.profiles.set(profile_id,
-                          {'file_name': profile_file_name,
-                           'timestamp': timestamp})
+        self.profiles.set(profile_id, {
+                            'status': PROFILE_STATUS_READY,
+                            'file_name': profile_file_name,
+                            'timestamp': timestamp})
 
         return profile_id
 
@@ -33,6 +42,8 @@ class ProfileStore:
             return {"error": "Profile not found"}
 
         file_name = profile_result['file_name']
+
+
         f = open(f'{DEFAULT_PROFILE_RESULT_DIR}/{profile_id}/{file_name}.html', "r")
         return f
 
