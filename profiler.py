@@ -4,10 +4,10 @@ from ydata_profiling import ProfileReport
 import os
 import pandas as pd
 import uuid
-from dictstore import DictStore
+from sqlitestore import SQLite
 
 DEFAULT_PROFILE_RESULT_DIR = 'profile_result_store'
-PROFILE_STORE = 'profile_store.json'
+PROFILE_STORE = 'profile_store.db'
 
 PROFILE_STATUS_READY = 'READY'
 PROFILE_STATUS_PROCESSING = 'PROCESSING'
@@ -16,9 +16,9 @@ class ProfileStore:
     def __init__(self):
         if not os.path.exists(DEFAULT_PROFILE_RESULT_DIR):
             os.makedirs(DEFAULT_PROFILE_RESULT_DIR)
-        self.profiles = DictStore(f'{DEFAULT_PROFILE_RESULT_DIR}/{PROFILE_STORE}')
+        self.profiles = SQLite(f'{DEFAULT_PROFILE_RESULT_DIR}/{PROFILE_STORE}')
 
-    def create_profile(self, input_file):
+    async def create_profile(self, input_file):
         profile_id = str(uuid.uuid4())
         timestamp = datetime.now()
 
