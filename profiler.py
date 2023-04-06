@@ -46,6 +46,11 @@ class ProfileStore:
         f = open(profile_file_path, "r")
         return f
 
+    def clean_profiles(self, timestamp_threshold):
+        profile_ids = self.profiles.delete_by(timestamp_threshold)
+        print(profile_ids)
+
+
     def _profile_file(self, profile_id, input_file):
         directory_path = os.path.join('.', f'{DEFAULT_PROFILE_RESULT_DIR}/{profile_id}')
         os.makedirs(directory_path)

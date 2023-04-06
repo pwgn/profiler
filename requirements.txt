@@ -1,7 +1,9 @@
-pymongo
+asyncio
 fastapi
 pandas
+pymongo
 python-multipart
 uuid
 uvicorn[standard]
 ydata-profiling
+pysqlite3
