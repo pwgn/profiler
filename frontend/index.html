@@ -27,12 +27,12 @@
                 formData.append("files", file);
             }
 
-            fetch("http://localhost:8000/api/profile/", {
+            fetch("http://localhost:8000/api/profile", {
                 method: "post",
                 body: formData,
             })
             .then((response) => response.json())
-            .then((data) => window.location.href = 'api/profile/' // show html content in data.content)
+            .then((data) => window.location.href = '/api/profile/' + data.profile_id)
             .catch((error) => ("Something went wrong!", error));
         };
 
