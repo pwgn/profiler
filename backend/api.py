@@ -1,5 +1,6 @@
 from fastapi import FastAPI, UploadFile, Response
 from fastapi.responses import HTMLResponse
+from fastapi.middleware.cors import CORSMiddleware
 from profiler import Profiler
 from typing import List
 import json
@@ -13,6 +14,19 @@ profile_store = Profiler()
 
 CLEANING_AGE = 1
 CLEANING_INTERVAL = 0.1
+
+# Set up CORS middleware
+origins = [
+    "http://localhost",
+    "http://localhost:5173",
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/", response_class=HTMLResponse)
 async def index():
