@@ -28,11 +28,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/", response_class=HTMLResponse)
-async def index():
-    f = open(f'../frontend/index.html', "r")
-    return f.read()
-
 @app.get("/api/profile/{profile_id}")
 async def read_results(profile_id: str):
     profile_result = profile_store.get_profile(profile_id)
